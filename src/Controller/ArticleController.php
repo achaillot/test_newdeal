@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +27,18 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="article_new", methods={"GET","POST"})
+     * @Route("/admin", name="article_admin_index", methods={"GET"})
+     */
+    public function adminIndex(ArticleRepository $articleRepository): Response
+    {
+        return $this->render('article/admin.index.html.twig', [
+            'articles' => $articleRepository->findAll(),
+        ]);
+    }
+
+
+    /**
+     * @Route("/admin/new", name="article_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
@@ -36,6 +48,8 @@ class ArticleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $article->setDate(new DateTime());
+
             $entityManager->persist($article);
             $entityManager->flush();
 
@@ -59,7 +73,7 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="article_edit", methods={"GET","POST"})
+     * @Route("/{id}/admin/edit", name="article_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Article $article): Response
     {
