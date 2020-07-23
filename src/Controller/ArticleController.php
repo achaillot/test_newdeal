@@ -53,7 +53,7 @@ class ArticleController extends AbstractController
             $entityManager->persist($article);
             $entityManager->flush();
 
-            return $this->redirectToRoute('article_index');
+            return $this->redirectToRoute('article_admin_index');
         }
 
         return $this->render('article/new.html.twig', [
@@ -73,7 +73,18 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/admin/edit", name="article_edit", methods={"GET","POST"})
+     * @Route("/admin/{id}", name="article_admin_show", methods={"GET"})
+     */
+    public function adminShow(Article $article): Response
+    {
+        return $this->render('article/admin.show.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+
+    /**
+     * @Route("/{id}/admin/edit", name="article_admin_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Article $article): Response
     {
@@ -83,7 +94,7 @@ class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('article_index');
+            return $this->redirectToRoute('article_admin_index');
         }
 
         return $this->render('article/edit.html.twig', [
@@ -93,7 +104,7 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="article_delete", methods={"DELETE"})
+     * @Route("/admin/{id}", name="article_admin_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Article $article): Response
     {
@@ -103,6 +114,6 @@ class ArticleController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('article_index');
+        return $this->redirectToRoute('article_admin_index');
     }
 }

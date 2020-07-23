@@ -11,9 +11,10 @@
             <p>Tu peux directement accéder à la liste des articles</p>
             <button class="article-button" type="button"><a class="article-link" href="{{ path('article_index')}}" role="button">Articles</a></button>
         </div>
+        </br>
         <div class="user-link">
-            <p>Mais également à la liste des utilisateurs</p>
-            <button class="article-button" type="button"><a class="user-link" href="{{ path('user_index')}}" role="button">Utilisateurs</a></button>
+            <p>Si tu es l'administrateur, connecte-toi ici </p>
+            <button class="article-button" type="button"><a class="user-link" href="{{ path('app_login')}}" role="button">Administrateur</a></button>
         </div>
     </div>
 {% endblock %}
