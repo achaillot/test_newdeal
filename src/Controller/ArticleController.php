@@ -21,45 +21,44 @@ class ArticleController extends AbstractController
      */
     public function index(ArticleRepository $articleRepository): Response
     {
+        if($this->getUser()) {
+            return $this->render('article/admin.index.html.twig', [
+                'articles' => $articleRepository->findAll(),
+            ]);
+        }
+
         return $this->render('article/index.html.twig', [
             'articles' => $articleRepository->findAll(),
         ]);
     }
 
     /**
-     * @Route("/admin", name="article_admin_index", methods={"GET"})
-     */
-    public function adminIndex(ArticleRepository $articleRepository): Response
-    {
-        return $this->render('article/admin.index.html.twig', [
-            'articles' => $articleRepository->findAll(),
-        ]);
-    }
-
-
-    /**
-     * @Route("/admin/new", name="article_new", methods={"GET","POST"})
+     * @Route("/new", name="article_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
-        $article = new Article();
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
+        if($this->getUser()) {
+            $article = new Article();
+            $form = $this->createForm(ArticleType::class, $article);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $article->setDate(new DateTime());
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $article->setDate(new DateTime());
 
-            $entityManager->persist($article);
-            $entityManager->flush();
+                $entityManager->persist($article);
+                $entityManager->flush();
 
-            return $this->redirectToRoute('article_admin_index');
+                return $this->redirectToRoute('article_index');
+            }
+
+            return $this->render('article/new.html.twig', [
+                'article' => $article,
+                'form' => $form->createView(),
+            ]);
         }
 
-        return $this->render('article/new.html.twig', [
-            'article' => $article,
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('article_index');
     }
 
     /**
@@ -67,53 +66,57 @@ class ArticleController extends AbstractController
      */
     public function show(Article $article): Response
     {
+        if($this->getUser()) {
+            return $this->render('article/admin.show.html.twig', [
+                'article' => $article,
+            ]);
+        }
+
         return $this->render('article/show.html.twig', [
             'article' => $article,
         ]);
     }
 
     /**
-     * @Route("/admin/{id}", name="article_admin_show", methods={"GET"})
-     */
-    public function adminShow(Article $article): Response
-    {
-        return $this->render('article/admin.show.html.twig', [
-            'article' => $article,
-        ]);
-    }
-
-
-    /**
-     * @Route("/{id}/admin/edit", name="article_admin_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="article_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Article $article): Response
     {
-        $form = $this->createForm(ArticleType::class, $article);
-        $form->handleRequest($request);
+        if($this->getUser()) {
+            $form = $this->createForm(ArticleType::class, $article);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('article_admin_index');
+                return $this->redirectToRoute('article_index');
+            }
+
+            return $this->render('article/edit.html.twig', [
+                'article' => $article,
+                'form' => $form->createView(),
+            ]);
         }
 
-        return $this->render('article/edit.html.twig', [
-            'article' => $article,
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('article_index');
     }
 
     /**
-     * @Route("/admin/{id}", name="article_admin_delete", methods={"DELETE"})
+     * @Route("/{id}", name="article_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Article $article): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($article);
-            $entityManager->flush();
+        if($this->getUser()) {
+            if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($article);
+                $entityManager->flush();
+            }
+            
+            return $this->redirectToRoute('article_index');
         }
 
-        return $this->redirectToRoute('article_admin_index');
+        return $this->redirectToRoute('article_index');
+
     }
 }

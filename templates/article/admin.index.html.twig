@@ -21,8 +21,8 @@
                 <td>{{ article.Date ? article.Date|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ article.text }}</td>
                 <td>
-                    <a href="{{ path('article_admin_show', {'id': article.id}) }}">show</a>
-                    <a href="{{ path('article_admin_edit', {'id': article.id}) }}">edit</a>
+                    <a href="{{ path('article_show', {'id': article.id}) }}">show</a>
+                    <a href="{{ path('article_edit', {'id': article.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
