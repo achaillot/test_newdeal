@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article{% endblock %}
+
+{% block body %}
+    <h1>Article</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Author</th>
+                <td>{{ article.Author }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ article.Date ? article.Date|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Text</th>
+                <td>{{ article.text }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('article_index') }}">back to list</a>
+{% endblock %}
