@@ -24,7 +24,6 @@ class ArticleController extends AbstractController
         if($this->getUser()) {
             return $this->render('article/admin.index.html.twig', [
                 'articles' => $articleRepository->findAll(),
-                'user' => $this->getUser(),
             ]);
         }
 
